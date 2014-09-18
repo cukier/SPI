@@ -1,0 +1,50 @@
+
+ROM used: 468 (1%)
+          468 (1%) including unused fragments
+
+          1 Average locations per line
+          10 Average locations per statement
+
+RAM used: 6 (0%) at main() level
+          15 (1%) worst case
+
+Stack used: 5 worst case (out of 31 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+   37    10  21  spi_slave.c
+  359     0   0  C:\PICC\devices\18F452.h
+   88    38  79  lcd_8b.c
+----- -----
+  484    48 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     38   4   1             @delay_ms1
+0     36   4   1    98  1.3  lcd_cmd
+0     38   4   2   127  1.8  lcd_envia_byte
+0     34   4   3   173  5.0  lcd_pos_xy
+0     72   8   1   290  4.1  lcd
+0     78   8   1   325  3.3  lcd_init
+0    106  11   2   308  3.7  MAIN
+0     62   7   2             @PRINTF_X_77
+
+Program metrics:
+    Functions               6
+    Statements              48
+    Comments                102
+    Volume (V)              2000
+    Difficilty (D)          18.6
+    Effort to implement (E) 37271
+    Time to implement (T)   35 minutes
+    Est Delivered Bugs (B)  0
+    Cyclomatic Complexity   7
+    Maintainability (MI)    112
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00002     4  0  
+00004-07FFE   464  32300  
+
+
+

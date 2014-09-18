@@ -1,0 +1,44 @@
+
+ROM used: 120 (0%)
+          120 (0%) including unused fragments
+
+          0 Average locations per line
+          3 Average locations per statement
+
+RAM used: 5 (0%) at main() level
+          6 (0%) worst case
+
+Stack used: 1 worst case (out of 31 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+   31     6  14  spi_master.c
+  359     0   0  C:\PICC\devices\18F452.h
+   88    38  86  lcd_8b.c
+----- -----
+  478    44 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     40  17   1             @delay_ms1
+0     76  32   1   136  1.8  MAIN
+
+Program metrics:
+    Functions               1
+    Statements              44
+    Comments                105
+    Volume (V)              138
+    Difficilty (D)          1.7
+    Effort to implement (E) 230
+    Time to implement (T)   0 minutes
+    Est Delivered Bugs (B)  0
+    Cyclomatic Complexity   1
+    Maintainability (MI)    76
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00002     4  0  
+00004-07FFE   116  32648  
+
+
+

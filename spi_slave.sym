@@ -1,0 +1,81 @@
+000     @SCRATCH
+001     @SCRATCH
+001     _RETURN_
+002     @SCRATCH
+003     @SCRATCH
+005     MAIN.instr
+006     MAIN.address
+007     @PRINTF_X_77.P1
+007     lcd_init.conta
+008     @PRINTF_X_77.P1
+009     lcd.c
+00A     @delay_ms1.P1
+00A     lcd_pos_xy.x
+00B     lcd_pos_xy.y
+00C     lcd_pos_xy.endereco
+00D     lcd_envia_byte.nivel
+00E     lcd_envia_byte.dado
+00F     lcd_cmd.cmd
+F83     PSP_DATA
+FBB     CCP_2_LOW
+FBB     CCP_2
+FBC     CCP_2_HIGH
+FBE     CCP_1_LOW
+FBE     CCP_1
+FBF     CCP_1_HIGH
+FE1-FE2 @READ_PACKED_MEMORY.P1
+FE1-FE2 @WRITE_PACKED_MEMORY.P2
+FE9-FEA @WRITE_PACKED_MEMORY.P1
+FE9-FEA @WRITE_PROGRAM_MEMORY.P2
+FE9-FEA @READ_PROGRAM_MEMORY.P3
+FE9-FEA @READ_PACKED_MEMORY.P4
+FF6-FF8 @WRITE_PROGRAM_MEMORY.P1
+FF6-FF8 @READ_PROGRAM_MEMORY.P2
+
+ROM Allocation:
+0004  @delay_ms1
+002A  lcd_cmd
+009C  lcd_envia_byte
+00C2  lcd_pos_xy
+00E4  lcd
+004E  lcd_init
+016A  MAIN
+012C  @PRINTF_X_77
+016A  @cinit
+
+
+User Memory space: 
+
+User Memory space: 
+
+Project Directory:
+    D:\Projetos\SPI\
+
+Project Files:
+    spi_slave.c                                             [22-mar-12 16:14  CRC=4C050198]
+    C:\PICC\devices\18F452.h                                [27-jul-11 17:03  CRC=E6127A61]
+    lcd_8b.c                                                [21-mar-12 16:21  CRC=08B41DBA]
+
+Source signature=437FB76D
+
+Units:
+    D:\Projetos\SPI\spi_slave (main)
+
+Compiler Settings:
+    Processor:      PIC18F452
+    Pointer Size:   16
+    ADC Range:      0-255
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+
+Output Files:
+    Errors:      spi_slave.err
+    Ext Symbols: spi_slave.esym
+    INHX32:      spi_slave.hex
+    Symbols:     spi_slave.sym
+    List:        spi_slave.lst
+    Debug/COFF:  spi_slave.cof
+    Project:     spi_slave.PJT
+    Call Tree:   spi_slave.tre
+    Statistics:  spi_slave.STA

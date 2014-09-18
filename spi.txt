@@ -1,0 +1,138 @@
+// This program demonstrates an SPI slave with the PicDem2-Plus
+// board. Both Master and Slave are contained in one 16F877
+// chip. The Slave uses the hardware SPI pins on Port C and
+// Port A.  The Master uses software SPI on Port B.
+// See the following website for an explanation of SPI modes.
+// http://www.totalphase.com/support/articles/article03/
+
+#include <16F877.H>
+#device *=16
+#fuses XT, NOWDT, NOPROTECT, BROWNOUT, PUT, NOLVP
+#use delay(clock=4000000)
+#use rs232(baud=9600, xmit=PIN_C6, rcv=PIN_C7, ERRORS)
+
+// Software SPI pins used by Master.
+#define MASTER_SS  PIN_B2  // Connect to Slave \SS (Pin A5)
+#define MASTER_SCK PIN_B3  // Connect to Slave SCK (Pin C3)
+#define MASTER_SDI PIN_B4  // Connect to Slave SDO (Pin C5)
+#define MASTER_SDO PIN_B5  // Connect to Slave SDI (Pin C4)
+// Use Charlie U's SPI mode definitions.
+#define SPI_MODE_0_0 0x4000
+#define SPI_MODE_0_1 0x0000
+#define SPI_MODE_1_0 0x0010
+#define SPI_MODE_1_1 0x4010
+
+// Variables used for the SPI slave receive buffer.
+#define BUFFER_SIZE  80
+int8 buffer[BUFFER_SIZE];
+int8 next_in = 0;
+int8 next_out = 0;
+
+#define spi_kbhit (next_in != next_out)
+
+//----------------------------
+// Create an interrupt-driven SPI receive
+// buffer, similar to the way it's done for
+// RS-232 in the CCS example file, EX_SISR.C.
+
+#int_ssp
+void ssp_isr(void) {
+	buffer[next_in] = spi_read();
+
+	next_in++;
+
+	if (next_in >= BUFFER_SIZE)
+		next_in = 0;
+
+}
+
+//----------------------------
+// Wait for a character to become available
+// in the spi slave's receive buffer.  Then
+// get it from the buffer and return it.
+
+int8 spi_bgetc(void) {
+	int8 c;
+
+	while (!spi_kbhit)
+		;
+
+	c = buffer[next_out];
+
+	next_out++;
+	if (next_out >= BUFFER_SIZE)
+		next_out = 0;
+
+	return (c);
+}
+
+//----------------------------
+// Transmit a byte via the software SPI port.
+// Use SPI mode 0,0.
+
+void master_spi_write(char data) {
+	int8 i;
+
+	disable_interrupts(GLOBAL);
+
+	output_low(MASTER_SS);
+
+	for (i = 0; i < 8; i++) {
+		if (bit_test(data, 7))
+			output_high(MASTER_SDO);
+		else
+			output_low(MASTER_SDO);
+
+		delay_us(5);
+		output_high(MASTER_SCK);
+		delay_us(5);
+		output_low(MASTER_SCK);
+
+		data <<= 1;
+	}
+
+	output_high(MASTER_SS);
+
+	enable_interrupts(GLOBAL);
+
+}
+
+//======================================
+void main() {
+	char c;
+
+	// Initialize the hardware SSP for SPI Slave mode.
+	setup_spi(SPI_SLAVE | SPI_MODE_0_0);
+
+	// Initialize the software Master SPI pins.
+	output_high(MASTER_SS);
+	output_low(MASTER_SCK);
+	output_low(MASTER_SDO);
+	output_float(MASTER_SDI);
+
+	// Enable interrupts for the SPI slave.
+	clear_interrupt(INT_SSP);
+	enable_interrupts(INT_SSP);
+	enable_interrupts(GLOBAL);
+
+	// If the user presses a key on the PC, get the
+	// character and send it out the software SPI
+	// master port.   Then when the character is
+	// received by the hardware SPI slave and placed
+	// in its buffer, get it and send it back to the PC.
+
+	while (1) {
+		if (kbhit()) // Char available from PC ?
+		{
+			c = getc(); // If so, get it
+			master_spi_write(c); // Send it via SPI
+		}
+
+		if (spi_kbhit) // Char available from SPI slave ?
+		{
+			c = spi_bgetc(); // If so, get it
+			putc(c); // Send it to the PC
+		}
+	}
+
+}

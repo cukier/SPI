@@ -1,0 +1,344 @@
+CCS PCH C Compiler, Version 4.124, 63923               28-mar-12 16:15
+
+               Filename: D:\Projetos\SPI\spi_slave.lst
+
+               ROM used: 468 bytes (1%)
+                         Largest free fragment is 32300
+               RAM used: 6 (0%) at main() level
+                         15 (1%) worst case
+               Stack:    5 locations
+
+*
+0000:  GOTO   016A
+.................... /* 
+....................  * spi_slave.c 
+....................  * 
+....................  *  Created on: 21/03/2012 
+....................  *      Author: cuki 
+....................  */ 
+....................  
+.................... #include <18F452.h> 
+.................... //////// Standard Header file for the PIC18F452 device //////////////// 
+.................... #device PIC18F452 
+.................... #list 
+....................  
+....................  
+.................... #fuses HS,NOWDT,NOPROTECT,NOLVP 
+.................... #use delay(clock=8MHz) 
+*
+0004:  CLRF   FEA
+0006:  MOVLW  0A
+0008:  MOVWF  FE9
+000A:  MOVF   FEF,W
+000C:  BZ    0028
+000E:  MOVLW  02
+0010:  MOVWF  01
+0012:  CLRF   00
+0014:  DECFSZ 00,F
+0016:  BRA    0014
+0018:  DECFSZ 01,F
+001A:  BRA    0012
+001C:  MOVLW  97
+001E:  MOVWF  00
+0020:  DECFSZ 00,F
+0022:  BRA    0020
+0024:  DECFSZ FEF,F
+0026:  BRA    000E
+0028:  RETURN 0
+.................... #use rs232(baud=9600, xmit=PIN_C6, rcv=PIN_C7) 
+....................  
+.................... #include"lcd_8b.c" 
+.................... #define en pin_e1 
+.................... #define rs pin_e0 
+.................... #define data output_d 
+....................  
+.................... void lcd_cmd(byte cmd) { 
+....................  
+.................... 	data(cmd); 
+002A:  CLRF   F95
+002C:  MOVFF  0F,F8C
+.................... 	delay_us(10); 
+0030:  MOVLW  06
+0032:  MOVWF  00
+0034:  DECFSZ 00,F
+0036:  BRA    0034
+0038:  NOP   
+.................... 	output_high(en); 
+003A:  BCF    F96.1
+003C:  BSF    F8D.1
+.................... 	delay_us(10); 
+003E:  MOVLW  06
+0040:  MOVWF  00
+0042:  DECFSZ 00,F
+0044:  BRA    0042
+0046:  NOP   
+.................... 	output_low(en); 
+0048:  BCF    F96.1
+004A:  BCF    F8D.1
+....................  
+.................... } 
+004C:  RETURN 0
+....................  
+.................... void lcd_envia_byte(boolean nivel, byte dado) { 
+....................  
+.................... 	output_low(rs); 
+*
+009C:  BCF    F96.0
+009E:  BCF    F8D.0
+.................... 	output_bit(rs, nivel); 
+00A0:  MOVF   0D,F
+00A2:  BNZ   00A8
+00A4:  BCF    F8D.0
+00A6:  BRA    00AA
+00A8:  BSF    F8D.0
+00AA:  BCF    F96.0
+.................... 	delay_us(100); 
+00AC:  MOVLW  42
+00AE:  MOVWF  00
+00B0:  DECFSZ 00,F
+00B2:  BRA    00B0
+00B4:  NOP   
+.................... 	output_low(en); 
+00B6:  BCF    F96.1
+00B8:  BCF    F8D.1
+.................... 	lcd_cmd(dado); 
+00BA:  MOVFF  0E,0F
+00BE:  RCALL  002A
+....................  
+.................... } 
+00C0:  RETURN 0
+....................  
+.................... void lcd_pos_xy(byte x, byte y) { 
+....................  
+.................... 	byte endereco; 
+....................  
+.................... 	if (y != 1) 
+00C2:  DECFSZ 0B,W
+00C4:  BRA    00C8
+00C6:  BRA    00CE
+.................... 		endereco = 0xc0; 
+00C8:  MOVLW  C0
+00CA:  MOVWF  0C
+.................... 	else 
+00CC:  BRA    00D2
+.................... 		endereco = 0x80; 
+00CE:  MOVLW  80
+00D0:  MOVWF  0C
+....................  
+.................... 	endereco += x - 1; 
+00D2:  MOVLW  01
+00D4:  SUBWF  0A,W
+00D6:  ADDWF  0C,F
+.................... 	lcd_envia_byte(0, endereco); 
+00D8:  CLRF   0D
+00DA:  MOVFF  0C,0E
+00DE:  RCALL  009C
+....................  
+.................... } 
+00E0:  GOTO   012A (RETURN)
+....................  
+.................... void lcd(char c) { 
+....................  
+.................... 	switch (c) { 
+00E4:  MOVF   09,W
+00E6:  XORLW  0C
+00E8:  BZ    00F8
+00EA:  XORLW  06
+00EC:  BZ    0108
+00EE:  XORLW  07
+00F0:  BZ    0108
+00F2:  XORLW  05
+00F4:  BZ    0114
+00F6:  BRA    011E
+....................  
+.................... 	case '\f': 
+.................... 		lcd_envia_byte(0, 1); 
+00F8:  CLRF   0D
+00FA:  MOVLW  01
+00FC:  MOVWF  0E
+00FE:  RCALL  009C
+.................... 		delay_ms(2); 
+0100:  MOVLW  02
+0102:  MOVWF  0A
+0104:  RCALL  0004
+.................... 		break; 
+0106:  BRA    012A
+....................  
+.................... 	case '\n': 
+....................  
+.................... 	case '\r': 
+.................... 		lcd_pos_xy(1, 2); 
+0108:  MOVLW  01
+010A:  MOVWF  0A
+010C:  MOVLW  02
+010E:  MOVWF  0B
+0110:  BRA    00C2
+.................... 		break; 
+0112:  BRA    012A
+....................  
+.................... 	case '\b': 
+.................... 		lcd_envia_byte(0, 0x10); 
+0114:  CLRF   0D
+0116:  MOVLW  10
+0118:  MOVWF  0E
+011A:  RCALL  009C
+.................... 		break; 
+011C:  BRA    012A
+....................  
+.................... 	default: 
+.................... 		lcd_envia_byte(1, c); 
+011E:  MOVLW  01
+0120:  MOVWF  0D
+0122:  MOVFF  09,0E
+0126:  RCALL  009C
+.................... 		break; 
+0128:  BRA    012A
+.................... 	} 
+....................  
+.................... } 
+012A:  RETURN 0
+....................  
+.................... void lcd_init() { 
+....................  
+.................... 	byte conta; 
+....................  
+.................... 	data(0x00); 
+*
+004E:  CLRF   F95
+0050:  CLRF   F8C
+.................... 	output_low(rs); 
+0052:  BCF    F96.0
+0054:  BCF    F8D.0
+.................... 	output_low(en); 
+0056:  BCF    F96.1
+0058:  BCF    F8D.1
+.................... 	delay_ms(15); 
+005A:  MOVLW  0F
+005C:  MOVWF  0A
+005E:  RCALL  0004
+....................  
+.................... 	for (conta = 1; conta <= 3; conta++) { 
+0060:  MOVLW  01
+0062:  MOVWF  07
+0064:  MOVF   07,W
+0066:  SUBLW  03
+0068:  BNC   007A
+....................  
+.................... 		lcd_cmd(0x30); 
+006A:  MOVLW  30
+006C:  MOVWF  0F
+006E:  RCALL  002A
+.................... 		delay_ms(5); 
+0070:  MOVLW  05
+0072:  MOVWF  0A
+0074:  RCALL  0004
+....................  
+.................... 	} 
+0076:  INCF   07,F
+0078:  BRA    0064
+....................  
+.................... 	lcd_cmd(0x38); 
+007A:  MOVLW  38
+007C:  MOVWF  0F
+007E:  RCALL  002A
+.................... 	lcd_cmd(0x01); 
+0080:  MOVLW  01
+0082:  MOVWF  0F
+0084:  RCALL  002A
+.................... 	delay_ms(1); 
+0086:  MOVLW  01
+0088:  MOVWF  0A
+008A:  RCALL  0004
+.................... 	lcd_cmd(0x0c); 
+008C:  MOVLW  0C
+008E:  MOVWF  0F
+0090:  RCALL  002A
+.................... 	lcd_cmd(0x06); 
+0092:  MOVLW  06
+0094:  MOVWF  0F
+0096:  RCALL  002A
+....................  
+.................... } 
+0098:  GOTO   019C (RETURN)
+....................  
+....................  
+.................... void main(void) { 
+*
+016A:  CLRF   FF8
+016C:  BCF    FD0.7
+016E:  CLRF   FEA
+0170:  CLRF   FE9
+0172:  MOVLW  0C
+0174:  MOVWF  FAF
+0176:  MOVLW  A2
+0178:  MOVWF  FAC
+017A:  MOVLW  90
+017C:  MOVWF  FAB
+017E:  BSF    FC1.0
+0180:  BSF    FC1.1
+0182:  BSF    FC1.2
+0184:  BCF    FC1.3
+0186:  CLRF   05
+0188:  CLRF   06
+....................  
+.................... 	int instr = 0; 
+.................... 	int address = 0; 
+....................  
+.................... 	setup_spi(spi_slave | SPI_H_TO_L | SPI_CLK_DIV_16); 
+018A:  BCF    FC6.5
+018C:  BCF    F94.5
+018E:  BSF    F94.4
+0190:  BSF    F94.3
+0192:  MOVLW  35
+0194:  MOVWF  FC6
+0196:  MOVLW  40
+0198:  MOVWF  FC7
+....................  
+.................... 	lcd_init(); 
+019A:  BRA    004E
+.................... 	delay_ms(20); 
+019C:  MOVLW  14
+019E:  MOVWF  0A
+01A0:  RCALL  0004
+....................  
+.................... //	printf(lcd, "\fPronto!"); 
+.................... 	while (!spi_data_is_in()) 
+.................... 		; 
+01A2:  BTFSS  FC7.0
+01A4:  BRA    01A2
+.................... 	instr = spi_read(); 
+01A6:  MOVFF  FC9,05
+....................  
+.................... 	while (!spi_data_is_in()) 
+.................... 		; 
+01AA:  BTFSS  FC7.0
+01AC:  BRA    01AA
+.................... 	address = spi_read(); 
+01AE:  MOVFF  FC9,06
+....................  
+.................... 	printf(lcd, "\f%X\n%X", instr, address); 
+01B2:  MOVLW  0C
+01B4:  MOVWF  09
+01B6:  RCALL  00E4
+01B8:  MOVFF  05,07
+01BC:  MOVLW  37
+01BE:  MOVWF  08
+01C0:  RCALL  012C
+01C2:  MOVLW  0A
+01C4:  MOVWF  09
+01C6:  RCALL  00E4
+01C8:  MOVFF  06,07
+01CC:  MOVLW  37
+01CE:  MOVWF  08
+01D0:  RCALL  012C
+.................... } 
+01D2:  SLEEP 
+
+Configuration Fuses:
+   Word  1: 2200   HS NOOSCSEN
+   Word  2: 0E0E   PUT BROWNOUT BORV20 NOWDT WDT128
+   Word  3: 0100   CCP2C1
+   Word  4: 0081   STVREN NOLVP NODEBUG
+   Word  5: C00F   NOPROTECT NOCPB NOCPD
+   Word  6: E00F   NOWRT NOWRTC NOWRTB NOWRTD
+   Word  7: 400F   NOEBTR NOEBTRB

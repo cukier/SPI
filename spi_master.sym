@@ -1,0 +1,64 @@
+000     @SCRATCH
+001     @SCRATCH
+001     _RETURN_
+002     @SCRATCH
+003     @SCRATCH
+005     MAIN.@SCRATCH1
+006     @delay_ms1.P1
+F83     PSP_DATA
+FBB     CCP_2_LOW
+FBB     CCP_2
+FBC     CCP_2_HIGH
+FBE     CCP_1
+FBE     CCP_1_LOW
+FBF     CCP_1_HIGH
+FE1-FE2 @READ_PACKED_MEMORY.P1
+FE1-FE2 @WRITE_PACKED_MEMORY.P2
+FE9-FEA @WRITE_PROGRAM_MEMORY.P1
+FE9-FEA @WRITE_PACKED_MEMORY.P2
+FE9-FEA @READ_PROGRAM_MEMORY.P3
+FE9-FEA @READ_PACKED_MEMORY.P4
+FF6-FF8 @WRITE_PROGRAM_MEMORY.P1
+FF6-FF8 @READ_PROGRAM_MEMORY.P2
+
+ROM Allocation:
+0004  @delay_ms1
+002C  MAIN
+002C  @cinit
+
+
+User Memory space: 
+
+User Memory space: 
+
+Project Directory:
+    D:\Projetos\SPI\
+
+Project Files:
+    spi_master.c                                            [22-mar-12 16:07  CRC=9020E12B]
+    C:\PICC\devices\18F452.h                                [27-jul-11 17:03  CRC=E6127A61]
+    lcd_8b.c                                                [21-mar-12 16:21  CRC=08B41DBA]
+
+Source signature=879B9700
+
+Units:
+    D:\Projetos\SPI\spi_master (main)
+
+Compiler Settings:
+    Processor:      PIC18F452
+    Pointer Size:   16
+    ADC Range:      0-255
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+
+Output Files:
+    Errors:      spi_master.err
+    Ext Symbols: spi_master.esym
+    INHX32:      spi_master.hex
+    Symbols:     spi_master.sym
+    List:        spi_master.lst
+    Debug/COFF:  spi_master.cof
+    Project:     spi_master.PJT
+    Call Tree:   spi_master.tre
+    Statistics:  spi_master.STA
